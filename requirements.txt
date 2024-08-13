@@ -1,0 +1,5 @@
+pandas
+openai
+pinecone-client
+langchain
+streamlit
