@@ -3,3 +3,4 @@ openai
 pinecone-client
 langchain
 streamlit
+transformers
