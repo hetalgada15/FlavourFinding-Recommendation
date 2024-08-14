@@ -36,17 +36,18 @@ def get_restaurant_embedding(text):
 
 # Function to query Pinecone for recipes
 def fetch_recipe_metadata(user_query):
-    # Add logic to query Pinecone and fetch recipes
+    # Placeholder function for Pinecone query logic
     return []
 
 # Function to generate a new recipe using OpenAI
 def create_new_recipe(ingredients):
     prompt = f"Create a detailed recipe using the following ingredients: {', '.join(ingredients)}. Provide a name, description, and steps to make it."
-    response = client.chat.completions.create(
+    response = client.Completions.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
+        prompt=prompt,
+        max_tokens=500
     )
-    recipe_text = response.choices[0].message.content.strip()
+    recipe_text = response.choices[0].text.strip()
     parts = recipe_text.split('\n', 2)
     name = parts[0]
     description = parts[1]
@@ -56,7 +57,7 @@ def create_new_recipe(ingredients):
 # Function to query Pinecone for restaurants
 def get_restaurant_metadata(description):
     embedding = get_restaurant_embedding(description)
-    # Add logic to query Pinecone and fetch restaurants
+    # Placeholder function for Pinecone query logic
     return []
 
 # Function to filter messages
@@ -69,6 +70,7 @@ def process_message(chat_input):
     if chat_input.strip():
         user_message = {"role": "user", "content": chat_input.strip()}
         st.session_state.messages.append(user_message)
+        st.session_state.chat_input = ""  # Clear the input field
 
         if is_relevant_message(chat_input.strip()):
             response = fetch_model_response(st.session_state.messages)
@@ -81,11 +83,11 @@ def process_message(chat_input):
 # Function to fetch model response from OpenAI
 def fetch_model_response(messages):
     if messages:
-        completion = client.chat.completions.create(
+        completion = client.Completions.create(
             model="gpt-3.5-turbo",
             messages=messages
         )
-        return completion.choices[0].message.content.strip()
+        return completion.choices[0].text.strip()
     else:
         return "No message to process."
 
@@ -117,9 +119,9 @@ def main():
             st.title("Recommended Recipes")
             if st.session_state.get('recommended_recipes'):
                 for recipe in st.session_state.recommended_recipes:
-                    st.write("*Name:* " + recipe['name'])
-                    st.write("*Description:* " + recipe['description'])
-                    st.write("*Steps:* " + recipe['steps'])
+                    st.write("**Name:** " + recipe['name'])
+                    st.write("**Description:** " + recipe['description'])
+                    st.write("**Steps:** " + recipe['steps'])
                     st.markdown("---")
             else:
                 st.write("No recommended recipes found.")
@@ -131,26 +133,26 @@ def main():
             if description:
                 matches = get_restaurant_metadata(description)
                 if matches:
-                    st.write(f"*Restaurants Matching Description:*")
+                    st.write(f"**Restaurants Matching Description:**")
                     for match in matches:
-                        metadata = match['metadata']
-                        st.write(f"*Name:* {metadata.get('name', 'N/A')}")
-                        st.write(f"*Average Rating:* {metadata.get('averageRating', 'N/A')}")
-                        st.write(f"*City:* {metadata.get('city', 'N/A')}")
-                        st.write(f"*Description:* {metadata.get('description', 'N/A')}")
-                        st.write(f"*Display Address:* {metadata.get('displayAddress', 'N/A')}")
-                        st.write(f"*Image URL:* {metadata.get('imageUrl', 'N/A')}")
-                        st.write(f"*Latitude:* {metadata.get('latitude', 'N/A')}")
-                        st.write(f"*Longitude:* {metadata.get('longitude', 'N/A')}")
-                        st.write(f"*Market:* {metadata.get('market', 'N/A')}")
-                        st.write(f"*Price Range:* {metadata.get('priceRange', 'N/A')}")
-                        st.write(f"*Rating Count:* {metadata.get('ratingCount', 'N/A')}")
-                        st.write(f"*State:* {metadata.get('state', 'N/A')}")
-                        st.write(f"*Street:* {metadata.get('street', 'N/A')}")
-                        st.write(f"*Timezone:* {metadata.get('timezone', 'N/A')}")
-                        st.write(f"*Zip Code:* {metadata.get('zipCode', 'N/A')}")
-                        st.write(f"*Phone:* {metadata.get('phone', 'N/A')}")
-                        st.write(f"*Website:* {metadata.get('website', 'N/A')}")
+                        metadata = match.get('metadata', {})
+                        st.write(f"**Name:** {metadata.get('name', 'N/A')}")
+                        st.write(f"**Average Rating:** {metadata.get('averageRating', 'N/A')}")
+                        st.write(f"**City:** {metadata.get('city', 'N/A')}")
+                        st.write(f"**Description:** {metadata.get('description', 'N/A')}")
+                        st.write(f"**Display Address:** {metadata.get('displayAddress', 'N/A')}")
+                        st.write(f"**Image URL:** {metadata.get('imageUrl', 'N/A')}")
+                        st.write(f"**Latitude:** {metadata.get('latitude', 'N/A')}")
+                        st.write(f"**Longitude:** {metadata.get('longitude', 'N/A')}")
+                        st.write(f"**Market:** {metadata.get('market', 'N/A')}")
+                        st.write(f"**Price Range:** {metadata.get('priceRange', 'N/A')}")
+                        st.write(f"**Rating Count:** {metadata.get('ratingCount', 'N/A')}")
+                        st.write(f"**State:** {metadata.get('state', 'N/A')}")
+                        st.write(f"**Street:** {metadata.get('street', 'N/A')}")
+                        st.write(f"**Timezone:** {metadata.get('timezone', 'N/A')}")
+                        st.write(f"**Zip Code:** {metadata.get('zipCode', 'N/A')}")
+                        st.write(f"**Phone:** {metadata.get('phone', 'N/A')}")
+                        st.write(f"**Website:** {metadata.get('website', 'N/A')}")
                         st.write("---")
                 else:
                     st.write("No restaurants found matching your description.")
@@ -164,7 +166,6 @@ def main():
         
         if st.button("Send"):
             process_message(chat_input)
-            st.session_state.chat_input = ""  # Clear the input field only after processing the message
         
         if st.session_state.messages:
             for message in st.session_state.messages:
