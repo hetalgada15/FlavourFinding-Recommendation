@@ -65,36 +65,46 @@ client = setup_openai()
 # Function to query Pinecone for recipes
 def fetch_recipe_metadata(user_query):
     query_vector = convert_text_to_embedding(user_query)
-    response = recipe_index.query(vector=query_vector, top_k=10, include_metadata=True)
-    
-    matches = response.get('matches', [])
-    filtered_recipes = [match.get('metadata', {}) for match in matches if all(ingredient.lower() in match.get('metadata', {}).get('ingredients', '').lower() for ingredient in user_query.split(', '))]
-    
-    return filtered_recipes
+    try:
+        response = recipe_index.query(vector=query_vector, top_k=10, include_metadata=True)
+        matches = response.get('matches', [])
+        filtered_recipes = [match.get('metadata', {}) for match in matches if all(ingredient.lower() in match.get('metadata', {}).get('ingredients', '').lower() for ingredient in user_query.split(', '))]
+        return filtered_recipes
+    except Exception as e:
+        st.error(f"Error fetching recipes: {e}")
+        return []
 
 # Function to generate a new recipe using OpenAI
 def create_new_recipe(ingredients):
     prompt = f"Create a detailed recipe using the following ingredients: {', '.join(ingredients)}. Provide a name, description, and steps to make it."
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
-    )
-    recipe_text = response.choices[0].message.content.strip()
-    parts = recipe_text.split('\n', 2)
-    name = parts[0]
-    description = parts[1]
-    steps = parts[2] if len(parts) > 2 else ""
-    return {'name': name, 'description': description, 'steps': steps}
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        recipe_text = response.choices[0].message.content.strip()
+        parts = recipe_text.split('\n', 2)
+        name = parts[0]
+        description = parts[1]
+        steps = parts[2] if len(parts) > 2 else ""
+        return {'name': name, 'description': description, 'steps': steps}
+    except Exception as e:
+        st.error(f"Error creating new recipe: {e}")
+        return {'name': 'Error', 'description': 'Unable to generate recipe.', 'steps': ''}
 
 # Function to query Pinecone for restaurants
 def get_restaurant_metadata(description):
     embedding = get_restaurant_embedding(description)
-    response = restaurant_index.query(
-        vector=embedding,
-        top_k=10,
-        include_metadata=True
-    )
-    return response['matches'] if response['matches'] else []
+    try:
+        response = restaurant_index.query(
+            vector=embedding,
+            top_k=10,
+            include_metadata=True
+        )
+        return response.get('matches', [])
+    except Exception as e:
+        st.error(f"Error fetching restaurants: {e}")
+        return []
 
 # Function to filter messages
 def is_relevant_message(content):
@@ -103,7 +113,7 @@ def is_relevant_message(content):
 
 # Function to process chat messages
 def process_message():
-    if st.session_state.chat_input.strip():
+    if st.session_state.get('chat_input', '').strip():
         user_message = {"role": "user", "content": st.session_state.chat_input.strip()}
         st.session_state.messages.append(user_message)
 
@@ -119,22 +129,29 @@ def process_message():
 # Function to fetch model response from OpenAI
 def fetch_model_response(messages):
     if messages:
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages
-        )
-        return completion.choices[0].message.content.strip()
+        try:
+            completion = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages
+            )
+            return completion.choices[0].message.content.strip()
+        except Exception as e:
+            st.error(f"Error fetching model response: {e}")
+            return "Error in generating response."
     else:
         return "No message to process."
 
 # Function to save conversation to a file
 def save_conversation():
-    if st.session_state.messages:
+    if st.session_state.get('messages'):
         conversation = "\n".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
         filename = f"conversation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-        with open(filename, "w") as file:
-            file.write(conversation)
-        st.success(f"Conversation saved as {filename}")
+        try:
+            with open(filename, "w") as file:
+                file.write(conversation)
+            st.success(f"Conversation saved as {filename}")
+        except Exception as e:
+            st.error(f"Error saving conversation: {e}")
 
 # Main function for the Streamlit app
 def main():
@@ -148,9 +165,7 @@ def main():
             ingredients = user_query.split(', ')
             recipes = fetch_recipe_metadata(user_query)
             if recipes:
-                st.session_state.recommended_recipes = [
-                    recipe for recipe in recipes
-                ][:3]
+                st.session_state.recommended_recipes = recipes[:3]
             else:
                 st.session_state.recommended_recipes = [create_new_recipe(ingredients) for _ in range(3)]
             
@@ -186,37 +201,24 @@ def main():
                         st.write(f"**Price Range:** {metadata.get('priceRange', 'N/A')}")
                         st.write(f"**Rating Count:** {metadata.get('ratingCount', 'N/A')}")
                         st.write(f"**State:** {metadata.get('state', 'N/A')}")
-                        st.write(f"**Street:** {metadata.get('street', 'N/A')}")
-                        st.write(f"**Timezone:** {metadata.get('timezone', 'N/A')}")
                         st.write(f"**Zip Code:** {metadata.get('zipCode', 'N/A')}")
-                        st.write(f"**Phone:** {metadata.get('phone', 'N/A')}")
-                        st.write(f"**Website:** {metadata.get('website', 'N/A')}")
-                        st.write(f"**Neighborhood:** {metadata.get('neighborhood', 'N/A')}")
-                        st.write("---")
+                        st.markdown("---")
                 else:
-                    st.write("No matching restaurants found.")
+                    st.write("No restaurants found.")
             else:
-                st.warning("Please enter a description to search for restaurants.")
+                st.write("Please enter a description to find restaurants.")
 
     elif menu_option == "Chat":
-        st.title("Food & Recipe Chatbot")
-        st.write("Ask anything about recipes, ingredients, or food-related topics.")
-        st.session_state.chat_input = st.text_input("You: ", key="chat_input", on_change=process_message)
-        
-        if st.button("Save Conversation"):
-            save_conversation()
-
-        if st.session_state.get('messages'):
-            for message in st.session_state.messages:
-                st.write(f"{message['role'].title()}: {message['content']}")
-        
-        if st.button("Clear Conversation"):
+        if 'messages' not in st.session_state:
             st.session_state.messages = []
-
-# Set up initial states
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Run the app
+        
+        st.title("Chat with Assistant")
+        for msg in st.session_state.get('messages', []):
+            role = "User" if msg['role'] == "user" else "Assistant"
+            st.write(f"**{role}:** {msg['content']}")
+        
+        st.text_area("Chat", value="", key="chat", on_change=process_message, label_visibility="collapsed")
+        st.button("Save Conversation", on_click=save_conversation)
+        
 if __name__ == "__main__":
     main()
