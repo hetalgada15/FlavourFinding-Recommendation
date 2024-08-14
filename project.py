@@ -1,4 +1,3 @@
-
 import os
 import streamlit as st
 from transformers import AutoTokenizer, AutoModel, DistilBertTokenizer, DistilBertModel
@@ -7,16 +6,9 @@ import torch
 from openai import OpenAI
 from datetime import datetime
 
-import toml
-
-# Load secrets from the toml file
-with open('secrets.toml', 'r') as f:
-    secrets = toml.load(f)
-
-# Access the API keys
-PINECONE_API_KEY = secrets['secrets']['PINECONE_API_KEY']
-OPENAI_API_KEY = secrets['secrets']['OPENAI_API_KEY']
-
+# Access the API keys directly from Streamlit secrets
+PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 
 # Initialize Pinecone client
 pc = Pinecone(api_key=PINECONE_API_KEY)
@@ -204,22 +196,27 @@ def main():
                 else:
                     st.write("No matching restaurants found.")
             else:
-                st.warning("Please enter a description to find matching restaurants.")
+                st.warning("Please enter a description to search for restaurants.")
+
     elif menu_option == "Chat":
-        st.title("Chat with Assistant")
-        st.text_input("Your message:", key="chat_input", on_change=process_message)
+        st.title("Food & Recipe Chatbot")
+        st.write("Ask anything about recipes, ingredients, or food-related topics.")
+        st.session_state.chat_input = st.text_input("You: ", key="chat_input", on_change=process_message)
         
-        if st.session_state.get("messages"):
-            for msg in st.session_state.messages:
-                st.write(f"{msg['role'].title()}: {msg['content']}")
-        
-        # Save button for conversation
         if st.button("Save Conversation"):
             save_conversation()
 
-# Initialize session state for the first time
+        if st.session_state.get('messages'):
+            for message in st.session_state.messages:
+                st.write(f"{message['role'].title()}: {message['content']}")
+        
+        if st.button("Clear Conversation"):
+            st.session_state.messages = []
+
+# Set up initial states
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Run the app
 if __name__ == "__main__":
     main()
