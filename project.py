@@ -1,4 +1,3 @@
-
 import os
 import streamlit as st
 from transformers import AutoTokenizer, AutoModel, DistilBertTokenizer, DistilBertModel
@@ -104,18 +103,17 @@ def is_relevant_message(content):
 
 # Function to process chat messages
 def process_message():
-    if st.session_state.chat_input.strip():
-        user_message = {"role": "user", "content": st.session_state.chat_input.strip()}
-        st.session_state.messages.append(user_message)
+    user_message = {"role": "user", "content": st.session_state.chat_input.strip()}
+    st.session_state.messages.append(user_message)
+    st.session_state.chat_input = ""  # Clear the input field
 
-        if is_relevant_message(st.session_state.chat_input.strip()):
-            response = fetch_model_response(st.session_state.messages)
-        else:
-            response = "This is not a relevant topic. Please ask about recipes or food-related queries."
+    if is_relevant_message(user_message['content']):
+        response = fetch_model_response(st.session_state.messages)
+    else:
+        response = "This is not a relevant topic. Please ask about recipes or food-related queries."
 
-        assistant_message = {"role": "assistant", "content": response}
-        st.session_state.messages.append(assistant_message)
-        st.session_state.chat_input = ""
+    assistant_message = {"role": "assistant", "content": response}
+    st.session_state.messages.append(assistant_message)
 
 # Function to fetch model response from OpenAI
 def fetch_model_response(messages):
@@ -141,7 +139,7 @@ def save_conversation():
 def main():
     st.sidebar.title("Menu")  # Set the title for the sidebar
     menu_option = st.sidebar.selectbox("Select an Option", ["Find Recipes", "Find Restaurants", "Chat"])
-    
+
     if menu_option == "Find Recipes":
         user_query = st.sidebar.text_input("Search for a recipe:", "")
         if user_query and (user_query != st.session_state.get('last_query', '')):
@@ -192,32 +190,29 @@ def main():
                         st.write(f"**Zip Code:** {metadata.get('zipCode', 'N/A')}")
                         st.write(f"**Phone:** {metadata.get('phone', 'N/A')}")
                         st.write(f"**Website:** {metadata.get('website', 'N/A')}")
-                        st.write(f"**Neighborhood:** {metadata.get('neighborhood', 'N/A')}")
                         st.write("---")
                 else:
-                    st.write("No matching restaurants found.")
-            else:
-                st.warning("Please enter a description to search for restaurants.")
+                    st.write("No restaurants found matching your description.")
 
     elif menu_option == "Chat":
-        st.title("Food & Recipe Chatbot")
-        st.write("Ask anything about recipes, ingredients, or food-related topics.")
-        st.session_state.chat_input = st.text_input("You: ", key="chat_input", on_change=process_message)
+        if 'messages' not in st.session_state:
+            st.session_state.messages = []
+        
+        st.title("Chat with the Assistant")
+        chat_input = st.text_input("You: ", key="chat_input")
+        
+        if st.button("Send"):
+            process_message()
+        
+        if st.session_state.messages:
+            for message in st.session_state.messages:
+                if message['role'] == 'user':
+                    st.write(f"You: {message['content']}")
+                else:
+                    st.write(f"Assistant: {message['content']}")
         
         if st.button("Save Conversation"):
             save_conversation()
 
-        if st.session_state.get('messages'):
-            for message in st.session_state.messages:
-                st.write(f"{message['role'].title()}: {message['content']}")
-        
-        if st.button("Clear Conversation"):
-            st.session_state.messages = []
-
-# Set up initial states
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Run the app
 if __name__ == "__main__":
     main()
