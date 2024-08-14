@@ -3,7 +3,6 @@ from transformers import AutoTokenizer, AutoModel, DistilBertTokenizer, DistilBe
 import torch
 from openai import OpenAI
 from datetime import datetime
-
 # Access the API keys directly from Streamlit secrets
 PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
 OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
