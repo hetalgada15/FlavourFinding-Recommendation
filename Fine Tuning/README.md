@@ -1,5 +1,7 @@
 # Fine-Tuned Model for Restaurant and Recipe Recommendations
 
+[Fine Tuning Model Video](https://youtu.be/t06grMWrOJY)
+
 ## Overview
 
 This project involves fine-tuning a GPT-3.5-turbo model to improve its performance in recommending restaurants based on specific dishes or cuisines. The fine-tuning process utilizes custom training data generated from a combination of restaurant and recipe datasets. The model is then evaluated using a set of predefined metrics to assess its performance.
