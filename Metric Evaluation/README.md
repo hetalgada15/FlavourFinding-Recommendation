@@ -1,5 +1,7 @@
 # Recipe Recommendation System Evaluation with DeepEval
 
+[Metric Evaluation Video](https://youtu.be/HHTI40mYQks)
+
 ## Overview
 
 This project is designed to evaluate a Retrieval-Augmented Generation (RAG) chatbot focused on recipe recommendation using the DeepEval library. The evaluation emphasizes key metrics such as Answer Relevancy, Faithfulness, Contextual Precision, Contextual Recall, and Contextual Relevancy, which are critical for assessing the quality of recipe recommendations provided by the chatbot.
