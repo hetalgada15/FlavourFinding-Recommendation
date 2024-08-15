@@ -45,7 +45,7 @@ For more information on the Chatbot refer each folder, they contain a detailed R
 
 ## Collaborators
 
-- Hetal Gada : gada.he@northeastern.edu
+- Hetal Gada  (NUID:002114112): gada.he@northeastern.edu
 - Dristi Dani (NUID:002756885) : dani.d@northeastern.edu
 - Vishwa Shah : shah.vishw@northeastern.edu
 
