@@ -11,7 +11,6 @@
   - [2. Find Restaurants](#2-find-restaurants)
   - [3. Chat with the Assistant](#3-chat-with-the-assistant)
   - [4. Save Conversations](#4-save-conversations)
-- [Project Structure](#project-structure)
 - [Future Enhancements](#future-enhancements)
 - [Contributing](#contributing)
 - [License](#license)
@@ -45,6 +44,7 @@ Whether you're a food enthusiast, a professional chef, or simply someone looking
 8. **User Interaction**: The final response is delivered to the user through a user-friendly interface, where they can ask follow-up questions or explore additional queries.
 
 ## Setup Instructions
+(project.py is located outside of this folder)
 
 ### Prerequisites
 
@@ -83,7 +83,7 @@ Whether you're a food enthusiast, a professional chef, or simply someone looking
 To run the Streamlit application, use the following command:
 
 ```bash
-streamlit run app.py
+streamlit run project.py
 ```
 
 ## Dependencies
@@ -132,7 +132,12 @@ home cooks and food enthusiasts.
 the recommendation engine
 
 
-## Contributing
+## Collaborators & Contributions
+
+Collaborators: 
+- Hetal Gada: gada.he@northeastern.edu
+- Dristi Dani: dani.d@northeastern.edu
+- Vishwa Shah: shah.vishw@northeastern.edu
 
 Contributions are welcome! To contribute:
 
