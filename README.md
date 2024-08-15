@@ -1,6 +1,6 @@
-# AI FlavorFinder
+# AI FlavorFinder 🥗
 
-Introduction:
+## Introduction:
 
 The AI FlavorFinder is a cutting-edge culinary recommendation system designed to provide users with personalized recipe suggestions based on the ingredients they have on hand. It goes beyond just offering recipes; the system also suggests restaurants serving similar dishes, enhancing both home cooking and dining-out experiences.
 
