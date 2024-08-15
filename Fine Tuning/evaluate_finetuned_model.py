@@ -1,63 +1,48 @@
+import openai
 from deepeval import evaluate
-from deepeval.metrics import AnswerRelevancyMetric
-from deepeval.metrics import FaithfulnessMetric
-from deepeval.metrics import ContextualPrecisionMetric
-from deepeval.metrics import ContextualRecallMetric
-from deepeval.metrics import ContextualRelevancyMetric
+from deepeval.metrics import AnswerRelevancyMetric, FaithfulnessMetric, ContextualPrecisionMetric, ContextualRecallMetric, ContextualRelevancyMetric
 from deepeval.test_case import LLMTestCase
-import pandas as pd
-import os
+import streamlit as st
 
-# Set the OpenAI API key directly in the script
-os.environ["OPENAI_API_KEY"] = "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"
 
-# Load the Excel file
-df = pd.read_excel("updated_recipes_evaluation.xlsx")
+# Set up your OpenAI API key
+# Access the API key from Streamlit secrets
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# Define enhanced metrics
-AnswerRelevancy = AnswerRelevancyMetric(
-    threshold=0.7,
-    model="gpt-4o-mini",
-    include_reason=True
+# Generate the response using the fine-tuned model
+response = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",  # Use your fine-tuned model's name if it's different
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Recommend a restaurant in Houston, TX that serves American burgers and offers a dish similar to Zesty Spaghetti Aglio E Olio with Lemon and Spinach."}
+    ],
+    temperature=0.7,
+    max_tokens=150
 )
 
-Faithfulness = FaithfulnessMetric(
-    threshold=0.7,
-    model="gpt-4o-mini",
-    include_reason=True
+# Extract the model's response
+model_output = response['choices'][0]['message']['content']
+
+# Define the test case
+test_case = LLMTestCase(
+    input="Recommend a restaurant in Houston, TX that serves American burgers and offers a dish similar to Zesty Spaghetti Aglio E Olio with Lemon and Spinach.",
+    actual_output=model_output,
+    expected_output="I recommend mcdonald's located at 2017 main st parking, 2017 main st, houston, tx 77002, usa. It is known for american, burgers, with an average rating of 3.850296021 stars."
 )
 
-ContextualPrecision = ContextualPrecisionMetric(
-    threshold=0.7,
-    model="gpt-4o-mini",
-    include_reason=True
-)
-ContextualRecall = ContextualRecallMetric(
-    threshold=0.7,  # Experiment with different thresholds
-    model="gpt-4o-mini",
-    include_reason=True
-)
-ContextualRelevancy = ContextualRelevancyMetric(
-    threshold=0.7,
-    model="gpt-4o-mini",
-    include_reason=True
-)
+# Define metrics
+metrics = [
+    AnswerRelevancyMetric(threshold=0.7, model="gpt-4o-mini", include_reason=True),
+    FaithfulnessMetric(threshold=0.7, model="gpt-4o-mini", include_reason=True),
+    ContextualPrecisionMetric(threshold=0.7, model="gpt-4o-mini", include_reason=True),
+    ContextualRecallMetric(threshold=0.7, model="gpt-4o-mini", include_reason=True),
+    ContextualRelevancyMetric(threshold=0.7, model="gpt-4o-mini", include_reason=True)
+]
 
-metrics = [AnswerRelevancy, ContextualPrecision, ContextualRelevancy, ContextualRecall, Faithfulness]
+# Evaluate the test case
+evaluation_results = evaluate([test_case], metrics)
 
-# Create test cases from the DataFrame
-test_cases = []
-for index, row in df.iterrows():
-    test_case = LLMTestCase(
-        input=row["Query"],
-        actual_output=row["Actual Output"],
-        expected_output=row["Expected Output"],
-        retrieval_context=[row["Retrieval Context"]]
-    )
-    test_cases.append(test_case)
-
-# Evaluate the test cases using the defined metrics
-results = evaluate(test_cases, metrics)
-
-# Print results for analysis
-print("Evaluation Results:", results)
+# Print evaluation results
+for metric, result in zip(metrics, evaluation_results):
+    print(f"{metric.__class__.__name__}: {result['score']}")
+    print(f"Reason: {result['reason']}")
