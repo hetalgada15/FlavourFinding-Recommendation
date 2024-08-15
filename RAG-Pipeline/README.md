@@ -1,5 +1,7 @@
 # FlavorFinder - A Smart Food Data Retrieval and Recommendation System
 
+[RAG-Pipeline Video](https://youtu.be/SeEZs1P1Cm8)
+
 ## Table of Contents
 
 - [Overview](#overview)
