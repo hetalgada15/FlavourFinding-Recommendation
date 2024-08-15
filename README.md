@@ -2,6 +2,13 @@
 
 Interact with the AI here: https://flavourfinding-recommendation-tsvtwwbrszqlyewudnknat.streamlit.app/
 
+Find all our videos below:
+[Metric Evaluation](https://youtu.be/HHTI40mYQks)
+
+[RAG-Pipeline Video](https://youtu.be/SeEZs1P1Cm8)
+
+[Fine Tuned Model Video](https://youtu.be/t06grMWrOJY)
+
 ## Introduction:
 
 The AI FlavorFinder is a sophisticated culinary recommendation platform designed to revolutionize the way people discover new recipes and dining experiences. By leveraging advanced natural language processing and machine learning, the system provides personalized recipe suggestions based on users' available ingredients, while also recommending nearby restaurants serving similar dishes.
