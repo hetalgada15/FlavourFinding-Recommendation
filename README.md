@@ -43,7 +43,6 @@ For more information on the Chatbot refer each folder, they contain a detailed R
 
 ## License
 
-## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/hetalgada15/FlavourFinding-Recommendation/blob/main/LICENSE) file for details.
 
