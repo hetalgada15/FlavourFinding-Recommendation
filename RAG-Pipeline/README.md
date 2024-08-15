@@ -119,13 +119,15 @@ streamlit run app.py
 
 ## Future Enhancements
 
-**- Potential Extensions:**
+**Potential Extensions:**
  - Integration with smart kitchen devices for real-time recipe adjustments.
  - Features like meal planning and automatic grocery list generation.
-**- Long-term Vision:**
+
+**Long-term Vision:**
  - Develop a comprehensive culinary assistant that o>ers AI-driven enhancements for both 
 home cooks and food enthusiasts.
-**- Further Development:**
+
+**Further Development:**
  - Collaborate with chefs and food platforms to expand the recipe database and enhance 
 the recommendation engine
 
