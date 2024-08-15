@@ -6,4 +6,4 @@ It is an intelligent system designed to retrieve and generate food-related data,
 
 ## Architecture Diagram
 
-![image](https://github.com/user-attachments/assets/2c184027-8b99-4dfa-96b2-b57f76af72c3)
+![image](https://github.com/user-attachments/assets/4406e735-59a3-4cf2-b8e9-e6391aa31f01)
