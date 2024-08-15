@@ -30,9 +30,17 @@ Unlike traditional recipe apps, AI FlavorFinder goes beyond simple ingredient ma
 - **User-Friendly Interface:** Create an intuitive interface that allows users to input natural language queries and receive relevant information quickly.
 - **Scalability and Reliability:** Ensure the system is scalable and reliable, capable of handling multiple user queries simultaneously.
 
-  ## Getting Started
+## Getting Started
   
 To get started with any of the projects in this repository, follow the instructions provided in the respective folders.
 For more information on the Chatbot refer each folder, they contain a detailed README with setup instructions, dependencies, and usage guidelines
+
+## Collaborators
+
+- Hetal Gada: gada.he@northeastern.edu
+- Dristi Dani: dani.d@northeastern.edu
+- Vishwa Shah: shah.vishw@northeastern.edu
+
+## License
 
 
