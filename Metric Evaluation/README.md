@@ -60,8 +60,8 @@ pip install deepeval
 
 1. **Clone this repository** to your local machine:
    ```bash
-   git clone https://github.com/yourusername/Recipe-Recommendation-Evaluation.git
-   cd Recipe-Recommendation-Evaluation
+   git clone https://github.com/hetalgada15/FlavourFinding-Recommendation.git
+   cd FlavourFinding-Recommendation/Metric\ Evaluation
    ```
 
 2. **Set up your environment**:
@@ -99,3 +99,7 @@ pip install deepeval
 - **Iterative Refinement**: Based on the analysis, continuously refine and optimize the methods to achieve better performance.
 
 ---
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
