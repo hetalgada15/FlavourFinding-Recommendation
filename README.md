@@ -47,7 +47,7 @@ For more information on the Chatbot refer each folder, they contain a detailed R
 
 - Hetal Gada  (NUID:002114112): gada.he@northeastern.edu
 - Dristi Dani (NUID:002756885) : dani.d@northeastern.edu
-- Vishwa Shah : shah.vishw@northeastern.edu
+- Vishwa Shah (NUID: 002729569) : shah.vishw@northeastern.edu
 
 ## License
 
