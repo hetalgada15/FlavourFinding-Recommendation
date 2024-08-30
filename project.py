@@ -1,5 +1,4 @@
 import streamlit as st
-from transformers import AutoTokenizer, AutoModel, DistilBertTokenizer, DistilBertModel
 from pinecone import Pinecone, ServerlessSpec
 import torch
 from openai import OpenAI
