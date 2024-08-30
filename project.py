@@ -1,5 +1,5 @@
 import streamlit as st
-from pinecone import Pinecone, ServerlessSpec
+# from pinecone import Pinecone, ServerlessSpec
 import torch
 from openai import OpenAI
 from datetime import datetime
